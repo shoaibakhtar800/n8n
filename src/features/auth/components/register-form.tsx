@@ -44,12 +44,9 @@ const registerSchema = z
 
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
-  .refine((data) => {
-    data.password === data.confirmPassword,
-      {
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-      };
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
   });
 
 type RegisterFormValue = z.infer<typeof registerSchema>;
@@ -78,8 +75,8 @@ const RegisterForm = () => {
           router.push("/");
         },
         onError: (error) => {
-            toast.error("Failed to register. Please try again.");
-        }
+          toast.error(error.error.message || "Something went wrong" );
+        },
       }
     );
   };

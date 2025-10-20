@@ -1,7 +1,9 @@
-import { baseProcedure, createTRPCRouter } from "../init";
+import { createTRPCRouter, protectedProcedure } from "../init";
 import primsa from "@/lib/db";
 export const appRouter = createTRPCRouter({
-  getUsers: baseProcedure.query(() => {
+  getUsers: protectedProcedure.query(({ ctx }) => {
+    console.log("User ID:", ctx.auth.user.id);
+
     return primsa.user.findMany();
   }),
 });
