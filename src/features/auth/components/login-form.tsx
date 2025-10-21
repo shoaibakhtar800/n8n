@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -80,7 +81,7 @@ const LoginForm = () => {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
-          <CardTitle>Welcome Back! Please Login to Your Account</CardTitle>
+          <CardTitle>Welcome Back!</CardTitle>
           <CardDescription>
             Enter your email and password to access your account.
           </CardDescription>
@@ -96,6 +97,7 @@ const LoginForm = () => {
                     type="button"
                     disabled={isPending}
                   >
+                    <Image src="github.svg" width={20} height={20} alt="GitHub" />
                     Continue with GitHub
                   </Button>
                   <Button
@@ -104,6 +106,7 @@ const LoginForm = () => {
                     type="button"
                     disabled={isPending}
                   >
+                    <Image src="google.svg" width={20} height={20} alt="Google" />
                     Continue with Google
                   </Button>
                 </div>

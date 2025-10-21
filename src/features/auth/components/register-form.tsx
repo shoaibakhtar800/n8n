@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -101,6 +102,7 @@ const RegisterForm = () => {
                     type="button"
                     disabled={isPending}
                   >
+                    <Image src="github.svg" width={20} height={20} alt="GitHub" />
                     Continue with GitHub
                   </Button>
                   <Button
@@ -109,6 +111,7 @@ const RegisterForm = () => {
                     type="button"
                     disabled={isPending}
                   >
+                    <Image src="google.svg" width={20} height={20} alt="Google" />
                     Continue with Google
                   </Button>
                 </div>
