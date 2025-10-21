@@ -206,6 +206,10 @@
   }
 }
 
+body {
+  font-family: var(--font-ubuntu), sans-serif;
+}
+
 /* React Flow node selection styles */
 .react-flow__node.selected #base-node {
   @apply ring-3 ring-muted-foreground/25 shadow-lg;
