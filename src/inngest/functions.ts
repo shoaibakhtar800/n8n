@@ -4,6 +4,7 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createHuggingFace } from "@ai-sdk/huggingface";
+import * as Sentry from "@sentry/nextjs";
 
 const google = createGoogleGenerativeAI();
 const openai = createOpenAI();
@@ -22,6 +23,11 @@ export const execute = inngest.createFunction(
           "You are a helpful assistant that helps users with their requests.",
         model: google("gemini-2.5-flash"),
         prompt: "What is the capital of France?",
+        experimental_telemetry: {
+          isEnabled: true,
+          recordInputs: true,
+          recordOutputs: true,
+        },
       }
     );
 
@@ -33,6 +39,11 @@ export const execute = inngest.createFunction(
           "You are a helpful assistant that helps users with their requests.",
         model: huggingface("deepseek-ai/DeepSeek-R1"),
         prompt: "What is the capital of France?",
+        experimental_telemetry: {
+          isEnabled: true,
+          recordInputs: true,
+          recordOutputs: true,
+        },
       }
     );
 
@@ -44,6 +55,11 @@ export const execute = inngest.createFunction(
           "You are a helpful assistant that helps users with their requests.",
         model: openai("gpt-3.5-turbo"),
         prompt: "What is the capital of France?",
+        experimental_telemetry: {
+          isEnabled: true,
+          recordInputs: true,
+          recordOutputs: true,
+        },
       }
     );
 
@@ -55,6 +71,11 @@ export const execute = inngest.createFunction(
           "You are a helpful assistant that helps users with their requests.",
         model: anthropic("claude-3-5-haiku-20241022"),
         prompt: "What is the capital of France?",
+        experimental_telemetry: {
+          isEnabled: true,
+          recordInputs: true,
+          recordOutputs: true,
+        },
       }
     );
 
@@ -62,7 +83,7 @@ export const execute = inngest.createFunction(
       geminiSteps,
       huggingfaceSteps,
       openaiSteps,
-      anthropicSteps
+      anthropicSteps,
     };
   }
 );
