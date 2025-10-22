@@ -13,6 +13,9 @@ const ubuntu = Ubuntu({
 export const metadata: Metadata = {
   title: "Nodebase",
   description: "The fair-code licensed node based workflow automation tool.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -22,9 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${ubuntu.variable}`}
-      >
+      <body className={`${ubuntu.variable}`}>
         <TRPCReactProvider>
           {children}
           <Toaster />
