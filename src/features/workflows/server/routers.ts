@@ -1,6 +1,6 @@
 import primsa from "@/lib/db";
 import { generateSlug } from "random-word-slugs";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { createTRPCRouter, premiumProcedure, protectedProcedure } from "@/trpc/init";
 import z from "zod";
 
 export const workflowsRouter = createTRPCRouter({
