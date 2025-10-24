@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import {
   AlertTriangleIcon,
   Loader2Icon,
@@ -8,8 +9,15 @@ import {
   TrashIcon,
 } from "lucide-react";
 import Link from "next/link";
+import React, { useEffect, useRef } from "react";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Card, CardContent, CardDescription, CardTitle } from "./ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import {
   Empty,
   EmptyContent,
@@ -18,15 +26,8 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "./ui/empty";
-import { cn } from "@/lib/utils";
-import React from "react";
-import { Card, CardContent, CardDescription, CardTitle } from "./ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+import { Input } from "./ui/input";
+import { Kbd, KbdGroup } from "./ui/kbd";
 
 type EntityHeaderProps = {
   title: string;
@@ -115,15 +116,33 @@ export const EntitySearch = ({
   onChange,
   placeholder,
 }: EntitySearchProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "/") {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <div className="relative ml-auto">
       <SearchIcon className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
       <Input
+        ref={inputRef}
         className="max-w-[200px] bg-background shadow-none border-border pl-8"
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
+      <KbdGroup>
+        <Kbd className="border rounded-lg absolute right-2 top-1/2 -translate-y-1/2 sm:flex">/</Kbd>
+      </KbdGroup>
     </div>
   );
 };

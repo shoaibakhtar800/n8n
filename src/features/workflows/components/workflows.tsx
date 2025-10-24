@@ -11,18 +11,18 @@ import {
   ErrorView,
   LoadingView,
 } from "@/components/entity-components";
+import type { Workflow } from "@/generated/prisma";
+import { useEntitySearch } from "@/hooks/use-entity-search";
+import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
+import { formatDistanceToNow } from "date-fns";
+import { WorkflowIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import {
   useCreateWorkflow,
   useRemoveWorkflow,
   useSuspenseWorkflows,
 } from "../hooks/use-workflows";
-import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
-import { useRouter } from "next/navigation";
 import { useWorkflowsParams } from "../hooks/use-workflows-params";
-import { useEntitySearch } from "@/hooks/use-entity-search";
-import type { Workflow } from "@/generated/prisma";
-import { WorkflowIcon } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
 
 export const WorkflowsSearch = () => {
   const [params, setParams] = useWorkflowsParams();

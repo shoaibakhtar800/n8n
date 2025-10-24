@@ -4,6 +4,7 @@ import { NodeToolbar, Position } from "@xyflow/react";
 import { ReactNode } from "react";
 import { Button } from "./ui/button";
 import { SettingsIcon, TrashIcon } from "lucide-react";
+import { WithTooltip } from "./with-tooltip";
 
 interface WorkflowNodeProps {
   children: ReactNode;
@@ -26,12 +27,16 @@ export const WorkflowNode = ({
     <>
       {showToolbar && (
         <NodeToolbar>
-          <Button size="sm" variant="ghost" onClick={onSettings}>
-            <SettingsIcon className="size-4" />
-          </Button>
-          <Button size="sm" variant="ghost" onClick={onDelete}>
-            <TrashIcon className="size-4" />
-          </Button>
+          <WithTooltip tooltip="Edit">
+            <Button size="sm" variant="ghost" onClick={onSettings}>
+              <SettingsIcon className="size-4" />
+            </Button>
+          </WithTooltip>
+          <WithTooltip tooltip="Delete">
+            <Button size="sm" variant="ghost" onClick={onDelete}>
+              <TrashIcon className="size-4" />
+            </Button>
+          </WithTooltip>
         </NodeToolbar>
       )}
       {children}
