@@ -4,6 +4,7 @@ import "./globals.css";
 import { TRPCReactProvider } from "@/trpc/client";
 import { Toaster } from "@/components/ui/sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Provider } from "jotai";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -28,7 +29,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${ubuntu.variable}`}>
         <TRPCReactProvider>
-          <NuqsAdapter>{children}</NuqsAdapter>
+          <NuqsAdapter>
+            <Provider>{children}</Provider>
+          </NuqsAdapter>
           <Toaster />
         </TRPCReactProvider>
       </body>

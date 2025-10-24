@@ -1,8 +1,9 @@
 import { createTRPCRouter } from "../init";
-import { workflowsRouter } from "@/features/workflows/server/routers";
+import { nodesRouter, workflowsRouter } from "@/features/workflows/server/routers";
 
 export const appRouter = createTRPCRouter({
   workflows: workflowsRouter,
+  nodes: nodesRouter
 });
 
 // export type definition of API

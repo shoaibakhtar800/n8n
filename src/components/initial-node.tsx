@@ -16,15 +16,13 @@ export const InitialNode = memo((props: NodeProps) => {
       open={selectorOpen}
       onOpenChange={setSelectorOpen}
       trigger={
-        <SheetTrigger asChild>
-          <WorkflowNode showToolbar={false}>
-            <PlaceholderNode {...props} onClick={() => setSelectorOpen(true)}>
-              <div className="cursor-pointer flex items-center justify-center">
-                <PlusIcon className="size-4" />
-              </div>
-            </PlaceholderNode>
-          </WorkflowNode>
-        </SheetTrigger>
+        <WorkflowNode showToolbar={false}>
+          <PlaceholderNode {...props} onClick={() => setSelectorOpen(true)}>
+            <div className="cursor-pointer flex items-center justify-center">
+              <PlusIcon className="size-4" />
+            </div>
+          </PlaceholderNode>
+        </WorkflowNode>
       }
     />
   );
