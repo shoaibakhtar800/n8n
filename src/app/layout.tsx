@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Ubuntu } from "next/font/google";
+import { Ubuntu, Ubuntu_Mono } from "next/font/google";
 import "./globals.css";
 import { TRPCReactProvider } from "@/trpc/client";
 import { Toaster } from "@/components/ui/sonner";
@@ -10,6 +10,12 @@ const ubuntu = Ubuntu({
   subsets: ["latin"],
   weight: ["400"],
   variable: "--font-ubuntu",
+});
+
+const ubuntuMono = Ubuntu_Mono({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-ubuntu-mono",
 });
 
 export const metadata: Metadata = {
@@ -27,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${ubuntu.variable}`}>
+      <body className={`${ubuntu.variable} ${ubuntuMono.variable}`}>
         <TRPCReactProvider>
           <NuqsAdapter>
             <Provider>{children}</Provider>
