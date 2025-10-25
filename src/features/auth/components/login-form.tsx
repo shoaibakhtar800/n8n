@@ -47,6 +47,13 @@ type LoginFormValue = z.infer<typeof loginSchema>;
 
 const LoginForm = () => {
   const router = useRouter();
+
+  const signIn = async () => {
+    const data = await authClient.signIn.social({
+      provider: "github",
+    });
+  };
+
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -96,8 +103,14 @@ const LoginForm = () => {
                     className="w-full"
                     type="button"
                     disabled={isPending}
+                    onClick={signIn}
                   >
-                    <Image src="github.svg" width={20} height={20} alt="GitHub" />
+                    <Image
+                      src="github.svg"
+                      width={20}
+                      height={20}
+                      alt="GitHub"
+                    />
                     Continue with GitHub
                   </Button>
                   <Button
@@ -106,7 +119,12 @@ const LoginForm = () => {
                     type="button"
                     disabled={isPending}
                   >
-                    <Image src="google.svg" width={20} height={20} alt="Google" />
+                    <Image
+                      src="google.svg"
+                      width={20}
+                      height={20}
+                      alt="Google"
+                    />
                     Continue with Google
                   </Button>
                 </div>

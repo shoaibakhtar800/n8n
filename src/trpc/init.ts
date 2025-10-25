@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import prisma from "@/lib/db";
 import { polarClient } from "@/lib/polar";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { headers } from "next/headers";
@@ -44,13 +45,20 @@ export const premiumProcedure = protectedProcedure.use(
       externalId: ctx.auth.user.id,
     });
 
+    const workflowCount = await prisma.workflow.count({
+      where: {
+        userId: ctx.auth.user.id,
+      },
+    });
+
     if (
-      !customer.activeSubscriptions ||
-      customer.activeSubscriptions.length === 0
+      workflowCount >= 5 &&
+      (!customer.activeSubscriptions ||
+        customer.activeSubscriptions.length === 0)
     ) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: "You must have an active subscription to access this resource",
+        message: "You must have an active subscription to use this resource",
       });
     }
 

@@ -54,6 +54,13 @@ type RegisterFormValue = z.infer<typeof registerSchema>;
 
 const RegisterForm = () => {
   const router = useRouter();
+
+  const signIn = async () => {
+    const data = await authClient.signIn.social({
+      provider: "github",
+    });
+  };
+
   const form = useForm({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -76,7 +83,7 @@ const RegisterForm = () => {
           router.push("/");
         },
         onError: (error) => {
-          toast.error(error.error.message || "Something went wrong" );
+          toast.error(error.error.message || "Something went wrong");
         },
       }
     );
@@ -101,8 +108,14 @@ const RegisterForm = () => {
                     className="w-full"
                     type="button"
                     disabled={isPending}
+                    onClick={signIn}
                   >
-                    <Image src="github.svg" width={20} height={20} alt="GitHub" />
+                    <Image
+                      src="github.svg"
+                      width={20}
+                      height={20}
+                      alt="GitHub"
+                    />
                     Continue with GitHub
                   </Button>
                   <Button
@@ -111,7 +124,12 @@ const RegisterForm = () => {
                     type="button"
                     disabled={isPending}
                   >
-                    <Image src="google.svg" width={20} height={20} alt="Google" />
+                    <Image
+                      src="google.svg"
+                      width={20}
+                      height={20}
+                      alt="Google"
+                    />
                     Continue with Google
                   </Button>
                 </div>
