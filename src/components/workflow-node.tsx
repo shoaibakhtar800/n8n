@@ -13,6 +13,7 @@ interface WorkflowNodeProps {
   onSettings?: () => void;
   name?: string;
   description?: string;
+  isDisabledOnDelete?: boolean;
 }
 
 export const WorkflowNode = ({
@@ -22,6 +23,7 @@ export const WorkflowNode = ({
   onSettings,
   name,
   description,
+  isDisabledOnDelete
 }: WorkflowNodeProps) => {
   return (
     <>
@@ -33,7 +35,7 @@ export const WorkflowNode = ({
             </Button>
           </WithTooltip>
           <WithTooltip tooltip="Delete">
-            <Button size="sm" variant="ghost" onClick={onDelete}>
+            <Button size="sm" variant="ghost" onClick={onDelete} disabled={isDisabledOnDelete}>
               <TrashIcon className="size-4" />
             </Button>
           </WithTooltip>

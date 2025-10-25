@@ -90,6 +90,7 @@ export const BaseTriggerNode = memo(
         onDelete={handleDelete}
         onSettings={onSettings}
         showToolbar={true}
+        isDisabledOnDelete={deleteNode.isPending}
       >
         <BaseNode
           onDoubleClick={onDoubleClick}

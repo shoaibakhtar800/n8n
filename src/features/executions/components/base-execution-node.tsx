@@ -88,6 +88,7 @@ export const BaseExecutionNode = memo(
         onDelete={handleDelete}
         onSettings={onSettings}
         showToolbar={true}
+        isDisabledOnDelete={deleteNode.isPending}
       >
         <BaseNode onDoubleClick={onDoubleClick}>
           <BaseNodeContent>

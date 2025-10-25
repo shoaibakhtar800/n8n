@@ -144,7 +144,9 @@ export const NodeSelector = ({
             );
           })}
         </div>
-        <Separator />
+        <div className="w-[90%] mx-auto">
+          <Separator />
+        </div>
         <div>
           {executionNodes.map((nodeType) => {
             const Icon = nodeType.icon;
