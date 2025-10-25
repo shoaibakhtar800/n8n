@@ -13,12 +13,17 @@ import { useDeleteNode } from "@/features/workflows/hooks/use-workflows";
 import { useAtomValue } from "jotai";
 import { workflowIdAtom } from "@/features/editor/store/atoms";
 import { toast } from "sonner";
+import {
+  NodeStatusIndicator,
+  type NodeStatus,
+} from "@/components/react-flow/node-status-indicator";
 
 interface BaseExecutionNodeProps extends NodeProps {
   icon: LucideIcon | string;
   name: string;
   description?: string;
   children?: ReactNode;
+  status?: NodeStatus;
   onSettings?: () => void;
   onDoubleClick?: () => void;
 }
@@ -30,6 +35,7 @@ export const BaseExecutionNode = memo(
     name,
     description,
     children,
+    status = "initial",
     onSettings,
     onDoubleClick,
   }: BaseExecutionNodeProps) => {
@@ -90,18 +96,28 @@ export const BaseExecutionNode = memo(
         showToolbar={true}
         isDisabledOnDelete={deleteNode.isPending}
       >
-        <BaseNode onDoubleClick={onDoubleClick}>
-          <BaseNodeContent>
-            {typeof Icon === "string" ? (
-              <Image src={Icon} alt={name} width={16} height={16} />
-            ) : (
-              <Icon className="size-4 text-muted-foreground" />
-            )}
-            {children}
-            <BaseHandle id="target-1" type="target" position={Position.Left} />
-            <BaseHandle id="source-1" type="source" position={Position.Right} />
-          </BaseNodeContent>
-        </BaseNode>
+        <NodeStatusIndicator status={status} variant="border" >
+          <BaseNode status={status} onDoubleClick={onDoubleClick}>
+            <BaseNodeContent>
+              {typeof Icon === "string" ? (
+                <Image src={Icon} alt={name} width={16} height={16} />
+              ) : (
+                <Icon className="size-4 text-muted-foreground" />
+              )}
+              {children}
+              <BaseHandle
+                id="target-1"
+                type="target"
+                position={Position.Left}
+              />
+              <BaseHandle
+                id="source-1"
+                type="source"
+                position={Position.Right}
+              />
+            </BaseNodeContent>
+          </BaseNode>
+        </NodeStatusIndicator>
       </WorkflowNode>
     );
   }
