@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { useSocialProvider } from "@/hooks/use-social-provider";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
@@ -54,12 +55,7 @@ type RegisterFormValue = z.infer<typeof registerSchema>;
 
 const RegisterForm = () => {
   const router = useRouter();
-
-  const signIn = async () => {
-    const data = await authClient.signIn.social({
-      provider: "github",
-    });
-  };
+  const { gitHubSignIn, googleSignIn, loading } = useSocialProvider();
 
   const form = useForm({
     resolver: zodResolver(registerSchema),
@@ -107,8 +103,8 @@ const RegisterForm = () => {
                     variant="outline"
                     className="w-full"
                     type="button"
-                    disabled={isPending}
-                    onClick={signIn}
+                    disabled={isPending || loading}
+                    onClick={gitHubSignIn}
                   >
                     <Image
                       src="github.svg"
@@ -122,7 +118,8 @@ const RegisterForm = () => {
                     variant="outline"
                     className="w-full"
                     type="button"
-                    disabled={isPending}
+                    disabled={isPending || loading}
+                    onClick={googleSignIn}
                   >
                     <Image
                       src="google.svg"
@@ -185,7 +182,7 @@ const RegisterForm = () => {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full" disabled={isPending}>
+                  <Button type="submit" className="w-full" disabled={isPending || loading}>
                     {isPending ? (
                       <>
                         <Spinner /> Signing Up...
