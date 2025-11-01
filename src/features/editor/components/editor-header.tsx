@@ -21,6 +21,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { editorAtom } from "../store/atoms";
 import { toast } from "sonner";
+import { WithTooltip } from "@/components/with-tooltip";
 
 export const EditorNameInput = ({ workflowId }: { workflowId: string }) => {
   const { data: workflow } = useSuspenseWorkflow(workflowId);
