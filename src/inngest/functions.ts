@@ -1,89 +1,35 @@
-import { inngest } from "./client";
-import { generateText } from "ai";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createHuggingFace } from "@ai-sdk/huggingface";
-import * as Sentry from "@sentry/nextjs";
+import { createOpenAI } from "@ai-sdk/openai";
+import { inngest } from "./client";
 
 const google = createGoogleGenerativeAI();
 const openai = createOpenAI();
 const anthropic = createAnthropic();
 const huggingface = createHuggingFace();
 
-export const execute = inngest.createFunction(
-  { id: "execute" },
-  { event: "execute/ai" },
+export const executeWorkflow = inngest.createFunction(
+  { id: "execute-workflow" },
+  { event: "workflows/execute.workflow" },
   async ({ event, step }) => {
-    const { steps: geminiSteps } = await step.ai.wrap(
-      "gemini-generate-text",
-      generateText,
-      {
-        system:
-          "You are a helpful assistant that helps users with their requests.",
-        model: google("gemini-2.5-flash"),
-        prompt: "What is the capital of France?",
-        experimental_telemetry: {
-          isEnabled: true,
-          recordInputs: true,
-          recordOutputs: true,
-        },
-      }
-    );
+  
+    await step.sleep("test", "5s");
 
-    const { steps: huggingfaceSteps } = await step.ai.wrap(
-      "huggingface-generate-text",
-      generateText,
-      {
-        system:
-          "You are a helpful assistant that helps users with their requests.",
-        model: huggingface("deepseek-ai/DeepSeek-R1"),
-        prompt: "What is the capital of France?",
-        experimental_telemetry: {
-          isEnabled: true,
-          recordInputs: true,
-          recordOutputs: true,
-        },
-      }
-    );
-
-    const { steps: openaiSteps } = await step.ai.wrap(
-      "openai-generate-text",
-      generateText,
-      {
-        system:
-          "You are a helpful assistant that helps users with their requests.",
-        model: openai("gpt-3.5-turbo"),
-        prompt: "What is the capital of France?",
-        experimental_telemetry: {
-          isEnabled: true,
-          recordInputs: true,
-          recordOutputs: true,
-        },
-      }
-    );
-
-    const { steps: anthropicSteps } = await step.ai.wrap(
-      "anthropic-generate-text",
-      generateText,
-      {
-        system:
-          "You are a helpful assistant that helps users with their requests.",
-        model: anthropic("claude-3-5-haiku-20241022"),
-        prompt: "What is the capital of France?",
-        experimental_telemetry: {
-          isEnabled: true,
-          recordInputs: true,
-          recordOutputs: true,
-        },
-      }
-    );
-
-    return {
-      geminiSteps,
-      huggingfaceSteps,
-      openaiSteps,
-      anthropicSteps,
-    };
+    // const { steps: huggingfaceSteps } = await step.ai.wrap(
+    //   "huggingface-generate-text",
+    //   generateText,
+    //   {
+    //     system:
+    //       "You are a helpful assistant that helps users with their requests.",
+    //     model: huggingface("deepseek-ai/DeepSeek-R1"),
+    //     prompt: "What is the capital of France?",
+    //     experimental_telemetry: {
+    //       isEnabled: true,
+    //       recordInputs: true,
+    //       recordOutputs: true,
+    //     },
+    //   }
+    // );
   }
 );
