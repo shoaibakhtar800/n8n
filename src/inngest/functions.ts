@@ -1,20 +1,47 @@
-import { createAnthropic } from "@ai-sdk/anthropic";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { createHuggingFace } from "@ai-sdk/huggingface";
-import { createOpenAI } from "@ai-sdk/openai";
+import { NonRetriableError } from "inngest";
 import { inngest } from "./client";
-
-const google = createGoogleGenerativeAI();
-const openai = createOpenAI();
-const anthropic = createAnthropic();
-const huggingface = createHuggingFace();
+import prisma from "@/lib/db";
+import { topologicalSort } from "./utils";
+import { NodeType } from "@/generated/prisma";
+import { getExecuter } from "@/features/executions/lib/executer-registry";
 
 export const executeWorkflow = inngest.createFunction(
   { id: "execute-workflow" },
   { event: "workflows/execute.workflow" },
   async ({ event, step }) => {
-  
-    await step.sleep("test", "5s");
+    const workflowId = event.data.workflowId;
+
+    if (!workflowId) {
+      throw new NonRetriableError("No workflow ID provided");
+    }
+
+    const sortedNodes = await step.run("prepare-workflow", async () => {
+      const workflow = await prisma.workflow.findUniqueOrThrow({
+        where: {
+          id: workflowId,
+        },
+        include: {
+          nodes: true,
+          connections: true,
+        },
+      });
+
+      return topologicalSort(workflow.nodes, workflow.connections);
+    });
+
+    let context = event.data.initialData || {};
+
+    for (const node of sortedNodes) {
+      const executer = getExecuter(node.type as NodeType);
+      context = await executer({
+        data: node.data as Record<string, unknown>,
+        nodeId: node.id,
+        context,
+        step,
+      });
+    }
+
+    return { workflowId, result: context };
 
     // const { steps: huggingfaceSteps } = await step.ai.wrap(
     //   "huggingface-generate-text",
