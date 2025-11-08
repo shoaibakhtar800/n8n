@@ -27,10 +27,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { workflowIdAtom } from "@/features/editor/store/atoms";
+import { useTRPC } from "@/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
+import { useUpdateExecutionNode } from "../../hooks/use-executions";
 
 const formSchema = z.object({
   endpoint: z.url({ message: "Please enter a valid URL" }),
@@ -44,16 +50,23 @@ export type HttpRequestFormValues = z.infer<typeof formSchema>;
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (values: z.infer<typeof formSchema>) => void;
+  onSubmitSetNodeData: (values: z.infer<typeof formSchema>) => void;
   defaultValues?: Partial<HttpRequestFormValues>;
+  nodeId: string;
 }
 
 export const HttpRequestDialog = ({
   open,
   onOpenChange,
-  onSubmit,
+  onSubmitSetNodeData,
   defaultValues,
+  nodeId,
 }: Props) => {
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
+  const updateExecutionNodeData = useUpdateExecutionNode();
+  const workflowId = useAtomValue(workflowIdAtom);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -77,8 +90,38 @@ export const HttpRequestDialog = ({
   const showBodyField = ["POST", "PUT", "PATCH"].includes(watchMethod);
 
   const handleSubmit = (values: HttpRequestFormValues) => {
-    onSubmit(values);
-    onOpenChange(false);
+    if (!workflowId) {
+      toast.error("Something went wrong. Please try again.");
+      return;
+    }
+
+    if (!nodeId) {
+      toast.error("Node ID is missing. Please try again.");
+      return;
+    }
+
+    updateExecutionNodeData.mutate(
+      {
+        id: nodeId,
+        workflowId,
+        data: {
+          ...values,
+        },
+      },
+      {
+        onSuccess: () => {
+          toast.success("HTTP Request node updated successfully.");
+          onSubmitSetNodeData(values);
+          onOpenChange(false);
+          queryClient.invalidateQueries(
+            trpc.workflows.getOne.queryOptions({ id: workflowId })
+          );
+        },
+        onError: (error) => {
+          toast.error(`Failed to update HTTP Request node: ${error.message}`);
+        },
+      }
+    );
   };
 
   return (
@@ -174,7 +217,7 @@ export const HttpRequestDialog = ({
                 />
               )}
               <DialogFooter className="mt-4">
-                <Button type="submit">Save</Button>
+                <Button type="submit" disabled={updateExecutionNodeData.isPending}>Save</Button>
               </DialogFooter>
             </form>
           </Form>

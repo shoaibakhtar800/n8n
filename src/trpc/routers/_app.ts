@@ -1,9 +1,14 @@
+import { executionsRouter } from "@/features/executions/server/routers";
+import {
+  nodesRouter,
+  workflowsRouter,
+} from "@/features/workflows/server/routers";
 import { createTRPCRouter } from "../init";
-import { nodesRouter, workflowsRouter } from "@/features/workflows/server/routers";
 
 export const appRouter = createTRPCRouter({
   workflows: workflowsRouter,
-  nodes: nodesRouter
+  nodes: nodesRouter,
+  executions: executionsRouter,
 });
 
 // export type definition of API

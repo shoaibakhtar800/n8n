@@ -74,9 +74,6 @@ export const BaseExecutionNode = memo(
 
             toast.success(`Node has been deleted successfully.`);
             queryClient.invalidateQueries(
-              trpc.workflows.getMany.queryOptions({})
-            );
-            queryClient.invalidateQueries(
               trpc.workflows.getOne.queryOptions({ id: data.id })
             );
           },
