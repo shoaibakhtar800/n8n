@@ -3,7 +3,7 @@ import { manualTriggerChannel } from "@/inngest/channels/manual-trigger";
 
 type ManualTriggerData = Record<string, unknown>;
 
-export const manualTriggerExecuter: NodeExecutor<ManualTriggerData> = async ({
+export const manualTriggerExecutor: NodeExecutor<ManualTriggerData> = async ({
   nodeId,
   context,
   step,
