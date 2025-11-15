@@ -54,6 +54,30 @@ const executionNodes: NodeTypeOption[] = [
     description: "Sends an HTTP request to an external API or service.",
     icon: GlobeIcon,
   },
+  {
+    type: NodeType.GEMINI,
+    label: "Gemini",
+    description: "Connects to Google Gemini AI to generate text, answer questions, or perform advanced AI tasks.",
+    icon: "/node-logos/gemini.svg",
+  },
+  {
+    type: NodeType.OPENAI,
+    label: "OpenAI",
+    description: "Connects to OpenAI AI to generate text, answer questions, or perform advanced AI tasks.",
+    icon: "/node-logos/openai.svg",
+  },
+  {
+    type: NodeType.ANTHROPIC,
+    label: "Anthropic",
+    description: "Connects to Anthropic AI to generate text, answer questions, or perform advanced AI tasks.",
+    icon: "/node-logos/anthropic.svg",
+  },
+  {
+    type: NodeType.DEEPSEEK,
+    label: "Deepseek",
+    description: "Connects to Deepseek AI to generate text, answer questions, or perform advanced AI tasks.",
+    icon: "/node-logos/deepseek.svg",
+  }
 ];
 
 interface NodeSelectorProps {
