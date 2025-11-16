@@ -1,9 +1,9 @@
 import { NodeStatus } from "@/components/react-flow/node-status-indicator";
 import { channel, topic } from "@inngest/realtime";
 
-export const DEEPSEEK_CHANNEL_NAME = "deepseek-execution";
+export const HUGGINGFACE_CHANNEL_NAME = "huggingface-execution";
 
-export const deepseekChannel = channel(DEEPSEEK_CHANNEL_NAME).addTopic(
+export const huggingfaceChannel = channel(HUGGINGFACE_CHANNEL_NAME).addTopic(
   topic("status").type<{
     nodeId: string;
     status: NodeStatus;

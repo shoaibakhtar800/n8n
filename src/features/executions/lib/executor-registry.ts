@@ -7,7 +7,7 @@ import { stripeTriggerExecutor } from "@/features/triggers/components/stripe-tri
 import { geminiExecutor } from "../components/gemini/executor";
 import { openAIExecutor } from "../components/openai/executor";
 import { anthropicExecutor } from "../components/anthropic/executor";
-import { deepseekExecutor } from "../components/deepseek/executor";
+import { huggingfaceExecutor } from "../components/huggingface/executor";
 
 export const executorRegistry: Record<NodeType, NodeExecutor> = {
   [NodeType.INITIAL]: manualTriggerExecutor,
@@ -18,7 +18,7 @@ export const executorRegistry: Record<NodeType, NodeExecutor> = {
   [NodeType.GEMINI]: geminiExecutor,
   [NodeType.ANTHROPIC]: anthropicExecutor,
   [NodeType.OPENAI]: openAIExecutor,
-  [NodeType.DEEPSEEK]: deepseekExecutor
+  [NodeType.HUGGINGFACE]: huggingfaceExecutor 
 };
 
 export const getExecutor = (type: NodeType): NodeExecutor => {

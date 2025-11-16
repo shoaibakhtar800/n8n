@@ -37,6 +37,9 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { useUpdateExecutionNode } from "../../hooks/use-executions";
+import { useCredentialsByType } from "@/features/credentials/hooks/use-credentials";
+import { CredentialType } from "@/generated/prisma";
+import Image from "next/image";
 
 export const AVAILABLE_MODELS = [
   "deepseek-ai/DeepSeek-R1",
@@ -58,28 +61,32 @@ const formSchema = z.object({
       message:
         "Variable name must start with a letter or underscore and contains only letters, numbers and underscores.",
     }),
+  credentialId: z.string().min(1, "Credential is required"),
   model: z.string().min(1, "Model is required"),
   systemPrompt: z.string().optional(),
   userPrompt: z.string().min(1, "User prompt is required"),
 });
 
-export type DeepseekFormValues = z.infer<typeof formSchema>;
+export type HuggingfaceFormValues = z.infer<typeof formSchema>;
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmitSetNodeData: (values: z.infer<typeof formSchema>) => void;
-  defaultValues?: Partial<DeepseekFormValues>;
+  defaultValues?: Partial<HuggingfaceFormValues>;
   nodeId: string;
 }
 
-export const DeepseekDialog = ({
+export const HuggingfaceDialog = ({
   open,
   onOpenChange,
   onSubmitSetNodeData,
   defaultValues,
   nodeId,
 }: Props) => {
+  const { data: credentials, isLoading: isLoadingCredentials } =
+    useCredentialsByType(CredentialType.HUGGINGFACE);
+
   const queryClient = useQueryClient();
   const trpc = useTRPC();
   const updateExecutionNodeData = useUpdateExecutionNode();
@@ -88,6 +95,7 @@ export const DeepseekDialog = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      credentialId: defaultValues?.credentialId ?? "",
       variableName: defaultValues?.variableName ?? "",
       model: defaultValues?.model ?? AVAILABLE_MODELS[0],
       systemPrompt: defaultValues?.systemPrompt ?? "",
@@ -98,6 +106,7 @@ export const DeepseekDialog = ({
   useEffect(() => {
     if (open) {
       form.reset({
+        credentialId: defaultValues?.credentialId ?? "",
         variableName: defaultValues?.variableName ?? "",
         model: defaultValues?.model ?? AVAILABLE_MODELS[0],
         systemPrompt: defaultValues?.systemPrompt ?? "",
@@ -106,9 +115,9 @@ export const DeepseekDialog = ({
     }
   }, [open, defaultValues, form]);
 
-  const watchVariableName = form.watch("variableName") || "myDeepseek";
+  const watchVariableName = form.watch("variableName") || "myHuggingface";
 
-  const handleSubmit = (values: DeepseekFormValues) => {
+  const handleSubmit = (values: HuggingfaceFormValues) => {
     if (!workflowId) {
       toast.error("Something went wrong. Please try again.");
       return;
@@ -129,7 +138,7 @@ export const DeepseekDialog = ({
       },
       {
         onSuccess: () => {
-          toast.success("Deepseek node updated successfully.");
+          toast.success("Huggingface node updated successfully.");
           onSubmitSetNodeData(values);
           onOpenChange(false);
           queryClient.invalidateQueries(
@@ -137,7 +146,7 @@ export const DeepseekDialog = ({
           );
         },
         onError: (error) => {
-          toast.error(`Failed to update Deepseek node: ${error.message}`);
+          toast.error(`Failed to update Huggingface node: ${error.message}`);
         },
       }
     );
@@ -147,16 +156,16 @@ export const DeepseekDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Deepseek Configuration</DialogTitle>
+          <DialogTitle>Huggingface Configuration</DialogTitle>
           <DialogDescription>
-            Configure settings for the Deepseek node. Use this node to interact
-            with Deepseek AI for generating text, answering questions, or
-            performing advanced AI tasks.
+            Configure settings for the Huggingface node. Use this node to
+            interact with Huggingface AI for generating text, answering
+            questions, or performing advanced AI tasks.
           </DialogDescription>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
-              className="space-y-8 mt-4"
+              className="space-y-4"
             >
               <FormField
                 control={form.control}
@@ -165,12 +174,48 @@ export const DeepseekDialog = ({
                   <FormItem>
                     <FormLabel>Variable Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="myDeepseek" {...field} />
+                      <Input placeholder="myHuggingface" {...field} />
                     </FormControl>
                     <FormDescription>
-                      Use this name to reference the response of this Deepseek
-                      node: {`{{${watchVariableName}.text}}`}
+                      Use this name to reference the response of this
+                      Huggingface node: {`{{${watchVariableName}.text}}`}
                     </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="credentialId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Hugging Face Credential</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={isLoadingCredentials || !credentials?.length}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a credential" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {credentials?.map((credential) => (
+                          <SelectItem key={credential.id} value={credential.id}>
+                            <div className="flex items-center gap-2">
+                              <Image
+                                src="/node-logos/hf-logo.svg"
+                                alt="Hugging Face"
+                                width={16}
+                                height={16}
+                              />
+                              {credential.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -199,7 +244,7 @@ export const DeepseekDialog = ({
                       </SelectContent>
                     </Select>
                     <FormDescription>
-                      The Deepseek model to use for completion
+                      The Huggingface model to use for completion
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

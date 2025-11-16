@@ -1,9 +1,10 @@
 import type { NodeExecutor } from "@/features/executions/types";
 import Handlebars from "handlebars";
 import { generateText } from "ai";
-import { createOpenAI } from '@ai-sdk/openai';
+import { createOpenAI } from "@ai-sdk/openai";
 import { NonRetriableError } from "inngest";
 import { openAIChannel } from "@/inngest/channels/openai";
+import prisma from "@/lib/db";
 
 Handlebars.registerHelper("json", (context) => {
   const stringified = JSON.stringify(context, null, 2);
@@ -16,6 +17,7 @@ type OpenAIData = {
   variableName?: string;
   model?: string;
   systemPrompt?: string;
+  credentialId?: string;
   userPrompt?: string;
 };
 
@@ -45,6 +47,17 @@ export const openAIExecutor: NodeExecutor<OpenAIData> = async ({
       throw new NonRetriableError("OpenAI node: Variable name is missing");
     }
 
+    if (!data.credentialId) {
+      await publish(
+        openAIChannel().status({
+          nodeId,
+          status: "error",
+        })
+      );
+
+      throw new NonRetriableError("OpenAI node: Credential is required");
+    }
+
     if (!data.userPrompt) {
       await publish(
         openAIChannel().status({
@@ -61,9 +74,23 @@ export const openAIExecutor: NodeExecutor<OpenAIData> = async ({
       : "You are a helpful assistant.";
     const userPrompt = Handlebars.compile(data.userPrompt)(context);
 
-    const credentialValue = process.env.OPENAI_API_KEY;
+    const credential = await step.run("get-credential", () => {
+      return prisma.credential.findUnique({
+        where: {
+          id: data.credentialId,
+        },
+        select: {
+          value: true,
+        },
+      });
+    });
+
+    if (!credential) {
+      throw new NonRetriableError("OpenAI node: Credential not found");
+    }
+
     const openAI = createOpenAI({
-      apiKey: credentialValue,
+      apiKey: credential.value,
     });
 
     const { steps } = await step.ai.wrap("openai-generate-text", generateText, {
@@ -90,7 +117,7 @@ export const openAIExecutor: NodeExecutor<OpenAIData> = async ({
     return {
       ...context,
       [data.variableName]: {
-        text
+        text,
       },
     };
   } catch (error) {

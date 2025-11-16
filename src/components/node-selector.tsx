@@ -73,10 +73,10 @@ const executionNodes: NodeTypeOption[] = [
     icon: "/node-logos/anthropic.svg",
   },
   {
-    type: NodeType.DEEPSEEK,
-    label: "Deepseek",
-    description: "Connects to Deepseek AI to generate text, answer questions, or perform advanced AI tasks.",
-    icon: "/node-logos/deepseek.svg",
+    type: NodeType.HUGGINGFACE,
+    label: "Hugging Face",
+    description: "Connects to Hugging Face AI to generate text, answer questions, or perform advanced AI tasks.",
+    icon: "/node-logos/hf-logo.svg",
   }
 ];
 

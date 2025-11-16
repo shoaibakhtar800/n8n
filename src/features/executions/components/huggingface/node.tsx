@@ -1,36 +1,37 @@
 "use client";
 
-import { DEEPSEEK_CHANNEL_NAME } from "@/inngest/channels/deepseek";
+import { HUGGINGFACE_CHANNEL_NAME } from "@/inngest/channels/huggingface";
 import { useReactFlow, type Node, type NodeProps } from "@xyflow/react";
 import { memo, useState } from "react";
 import { useNodeStatus } from "../../hooks/use-node-status";
 import { BaseExecutionNode } from "../base-execution-node";
-import { fetchDeepseekRealtimeToken } from "./actions";
-import { AVAILABLE_MODELS, DeepseekDialog, DeepseekFormValues } from "./dialog";
+import { fetchHuggingfaceRealtimeToken } from "./actions";
+import { AVAILABLE_MODELS, HuggingfaceDialog, HuggingfaceFormValues } from "./dialog";
 
-type DeepseekNodeData = {
+type HuggingfaceNodeData = {
   variableName?: string;
   model?: string;
   systemPrompt?: string;
+  credentialId?: string;
   userPrompt?: string;
 };
 
-type DeepseekNodeType = Node<DeepseekNodeData>;
+type HuggingfaceNodeType = Node<HuggingfaceNodeData>;
 
-export const DeepseekNode = memo((props: NodeProps<DeepseekNodeType>) => {
+export const HuggingfaceNode = memo((props: NodeProps<HuggingfaceNodeType>) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const { setNodes } = useReactFlow();
 
   const nodeStatus = useNodeStatus({
     nodeId: props.id,
-    channel: DEEPSEEK_CHANNEL_NAME,
+    channel: HUGGINGFACE_CHANNEL_NAME,
     topic: "status",
-    refreshToken: fetchDeepseekRealtimeToken,
+    refreshToken: fetchHuggingfaceRealtimeToken,
   });
 
   const handleOpenSettings = () => setDialogOpen(true);
 
-  const onSubmitSetNodeData = (values: DeepseekFormValues) => {
+  const onSubmitSetNodeData = (values: HuggingfaceFormValues) => {
     setNodes((nodes) =>
       nodes.map((node) => {
         if (node.id === props.id) {
@@ -55,7 +56,7 @@ export const DeepseekNode = memo((props: NodeProps<DeepseekNodeType>) => {
 
   return (
     <>
-      <DeepseekDialog
+      <HuggingfaceDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onSubmitSetNodeData={onSubmitSetNodeData}
@@ -65,8 +66,8 @@ export const DeepseekNode = memo((props: NodeProps<DeepseekNodeType>) => {
       <BaseExecutionNode
         {...props}
         id={props.id}
-        icon="/node-logos/deepseek.svg"
-        name="Deepseek"
+        icon="/node-logos/hf-logo.svg"
+        name="Hugging Face"
         status={nodeStatus}
         description={description}
         onSettings={handleOpenSettings}
@@ -76,4 +77,4 @@ export const DeepseekNode = memo((props: NodeProps<DeepseekNodeType>) => {
   );
 });
 
-DeepseekNode.displayName = "DeepseekNode";
+HuggingfaceNode.displayName = "HuggingfaceNode";

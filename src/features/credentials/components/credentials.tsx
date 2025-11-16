@@ -1,24 +1,24 @@
 "use client";
 
 import {
-    EmptyView,
-    EntityContainer,
-    EntityHeader,
-    EntityItem,
-    EntityList,
-    EntityPagination,
-    EntitySearch,
-    ErrorView,
-    LoadingView,
+  EmptyView,
+  EntityContainer,
+  EntityHeader,
+  EntityItem,
+  EntityList,
+  EntityPagination,
+  EntitySearch,
+  ErrorView,
+  LoadingView,
 } from "@/components/entity-components";
-import type { Credential } from "@/generated/prisma";
+import { type Credential, CredentialType } from "@/generated/prisma";
 import { useEntitySearch } from "@/hooks/use-entity-search";
 import { formatDistanceToNow } from "date-fns";
-import { WorkflowIcon } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
-    useRemoveCredential,
-    useSuspenseCredentials,
+  useRemoveCredential,
+  useSuspenseCredentials,
 } from "../hooks/use-credentials";
 import { useCredentialsParams } from "../hooks/use-credentials-params";
 
@@ -119,12 +119,21 @@ export const CredentialsEmpty = () => {
   );
 };
 
+const credentialLogos: Record<CredentialType, string> = {
+  [CredentialType.ANTHROPIC]: "/node-logos/anthropic.svg",
+  [CredentialType.HUGGINGFACE]: "/node-logos/hf-logo.svg",
+  [CredentialType.GEMINI]: "/node-logos/gemini.svg",
+  [CredentialType.OPENAI]: "/node-logos/openai.svg",
+}
+
 export const CredentialItem = ({ data }: { data: Credential }) => {
   const removeCredential = useRemoveCredential();
 
   const handleRemove = () => {
     removeCredential.mutate({ id: data.id });
   };
+
+  const logo = credentialLogos[data.type] || "/node-logos/openai.svg.svg";
 
   return (
     <EntityItem
@@ -139,7 +148,7 @@ export const CredentialItem = ({ data }: { data: Credential }) => {
       }
       image={
         <div className="size-8 flex items-center justify-center">
-          <WorkflowIcon className="size-5 text-muted-foreground" />
+          <Image src={logo} alt={data.type} width={20} height={20} />
         </div>
       }
       onRemove={handleRemove}

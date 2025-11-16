@@ -1,10 +1,10 @@
 import type { NodeExecutor } from "@/features/executions/types";
-import { geminiChannel } from "@/inngest/channels/gemini";
-import Handlebars from "handlebars";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { generateText } from "ai";
-import { NonRetriableError } from "inngest";
+import { huggingfaceChannel } from "@/inngest/channels/huggingface";
 import prisma from "@/lib/db";
+import { createHuggingFace } from "@ai-sdk/huggingface";
+import { generateText } from "ai";
+import Handlebars from "handlebars";
+import { NonRetriableError } from "inngest";
 
 Handlebars.registerHelper("json", (context) => {
   const stringified = JSON.stringify(context, null, 2);
@@ -13,15 +13,15 @@ Handlebars.registerHelper("json", (context) => {
   return safeString;
 });
 
-type GeminiData = {
+type HuggingfaceData = {
   variableName?: string;
   model?: string;
-  credentialId?: string;
   systemPrompt?: string;
+  credentialId?: string;
   userPrompt?: string;
 };
 
-export const geminiExecutor: NodeExecutor<GeminiData> = async ({
+export const huggingfaceExecutor: NodeExecutor<HuggingfaceData> = async ({
   data,
   nodeId,
   context,
@@ -30,7 +30,7 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
 }) => {
   try {
     await publish(
-      geminiChannel().status({
+      huggingfaceChannel().status({
         nodeId,
         status: "loading",
       })
@@ -38,35 +38,37 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
 
     if (!data.variableName) {
       await publish(
-        geminiChannel().status({
+        huggingfaceChannel().status({
           nodeId,
           status: "error",
         })
       );
 
-      throw new NonRetriableError("Gemini node: Variable name is missing");
+      throw new NonRetriableError(
+        "Hugging Face node: Variable name is missing"
+      );
     }
 
     if (!data.credentialId) {
       await publish(
-        geminiChannel().status({
+        huggingfaceChannel().status({
           nodeId,
           status: "error",
         })
       );
 
-      throw new NonRetriableError("Gemini node: Credential is required");
+      throw new NonRetriableError("Hugging Face node: Credential is required");
     }
 
     if (!data.userPrompt) {
       await publish(
-        geminiChannel().status({
+        huggingfaceChannel().status({
           nodeId,
           status: "error",
         })
       );
 
-      throw new NonRetriableError("Gemini node: User prompt is missing");
+      throw new NonRetriableError("Hugging Face node: User prompt is missing");
     }
 
     const systemPrompt = data.systemPrompt
@@ -80,35 +82,39 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
           id: data.credentialId,
         },
         select: {
-          value: true
-        }
+          value: true,
+        },
       });
     });
 
     if (!credential) {
-      throw new NonRetriableError("Gemini node: Credential not found");
+      throw new NonRetriableError("Hugging Face node: Credential not found");
     }
 
-    const google = createGoogleGenerativeAI({
+    const huggingface = createHuggingFace({
       apiKey: credential.value,
     });
 
-    const { steps } = await step.ai.wrap("gemini-generate-text", generateText, {
-      model: google(data.model || "gemini-2.0-flash"),
-      system: systemPrompt,
-      prompt: userPrompt,
-      experimental_telemetry: {
-        isEnabled: true,
-        recordInputs: true,
-        recordOutputs: true,
-      },
-    });
+    const { steps } = await step.ai.wrap(
+      "huggingface-generate-text",
+      generateText,
+      {
+        model: huggingface(data.model || "deepseek-ai/DeepSeek-R1"),
+        system: systemPrompt,
+        prompt: userPrompt,
+        experimental_telemetry: {
+          isEnabled: true,
+          recordInputs: true,
+          recordOutputs: true,
+        },
+      }
+    );
 
     const text =
       steps[0].content[0].type === "text" ? steps[0].content[0].text : "";
 
     await publish(
-      geminiChannel().status({
+      huggingfaceChannel().status({
         nodeId,
         status: "success",
       })
@@ -122,7 +128,7 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
     };
   } catch (error) {
     await publish(
-      geminiChannel().status({
+      huggingfaceChannel().status({
         nodeId,
         status: "error",
       })
