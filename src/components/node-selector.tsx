@@ -77,6 +77,18 @@ const executionNodes: NodeTypeOption[] = [
     label: "Hugging Face",
     description: "Connects to Hugging Face AI to generate text, answer questions, or perform advanced AI tasks.",
     icon: "/node-logos/hf-logo.svg",
+  },
+  {
+    type: NodeType.DISCORD,
+    label: "Discord",
+    description: "Connects your system with Discord for automated and AI-powered interactions.",
+    icon: "/node-logos/discord.svg",
+  },
+  {
+    type: NodeType.SLACK,
+    label: "Slack",
+    description: "Connects your system with Slack for automated workflows and AI-powered interactions.",
+    icon: "/node-logos/slack.svg",
   }
 ];
 

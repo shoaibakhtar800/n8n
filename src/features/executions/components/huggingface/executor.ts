@@ -27,6 +27,7 @@ export const huggingfaceExecutor: NodeExecutor<HuggingfaceData> = async ({
   context,
   step,
   publish,
+  userId,
 }) => {
   try {
     await publish(
@@ -80,6 +81,7 @@ export const huggingfaceExecutor: NodeExecutor<HuggingfaceData> = async ({
       return prisma.credential.findUnique({
         where: {
           id: data.credentialId,
+          userId
         },
         select: {
           value: true,
@@ -88,6 +90,13 @@ export const huggingfaceExecutor: NodeExecutor<HuggingfaceData> = async ({
     });
 
     if (!credential) {
+      await publish(
+        huggingfaceChannel().status({
+          nodeId,
+          status: "error",
+        })
+      );
+
       throw new NonRetriableError("Hugging Face node: Credential not found");
     }
 

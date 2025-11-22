@@ -10,6 +10,8 @@ import { stripeTriggerChannel } from "./channels/stripe-trigger";
 import { inngest } from "./client";
 import { topologicalSort } from "./utils";
 import { openAIChannel } from "./channels/openai";
+import { discordChannel } from "./channels/discord";
+import { slackChannel } from "./channels/slack";
 
 export const executeWorkflow = inngest.createFunction(
   { id: "execute-workflow", retries: 0 },
@@ -21,7 +23,9 @@ export const executeWorkflow = inngest.createFunction(
       googleFormTriggerChannel(),
       stripeTriggerChannel(),
       geminiChannel(),
-      openAIChannel()
+      openAIChannel(),
+      discordChannel(),
+      slackChannel()
     ],
   },
   async ({ event, step, publish }) => {
@@ -45,6 +49,17 @@ export const executeWorkflow = inngest.createFunction(
       return topologicalSort(workflow.nodes, workflow.connections);
     });
 
+    const userId = await step.run("find-user-id", async () => {
+      const workflow = await prisma.workflow.findUniqueOrThrow({
+        where: { id: workflowId },
+        select: {
+          userId: true,
+        },
+      });
+
+      return workflow.userId;
+    });
+
     let context = event.data.initialData || {};
 
     for (const node of sortedNodes) {
@@ -55,25 +70,10 @@ export const executeWorkflow = inngest.createFunction(
         context,
         step,
         publish,
+        userId,
       });
     }
 
     return { workflowId, result: context };
-
-    // const { steps: huggingfaceSteps } = await step.ai.wrap(
-    //   "huggingface-generate-text",
-    //   generateText,
-    //   {
-    //     system:
-    //       "You are a helpful assistant that helps users with their requests.",
-    //     model: huggingface("deepseek-ai/DeepSeek-R1"),
-    //     prompt: "What is the capital of France?",
-    //     experimental_telemetry: {
-    //       isEnabled: true,
-    //       recordInputs: true,
-    //       recordOutputs: true,
-    //     },
-    //   }
-    // );
   }
 );

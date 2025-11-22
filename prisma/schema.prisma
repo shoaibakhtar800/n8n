@@ -123,6 +123,8 @@ enum NodeType {
   GEMINI
   OPENAI
   HUGGINGFACE
+  DISCORD
+  SLACK
 }
 
 model Node {
