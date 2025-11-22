@@ -139,3 +139,12 @@ export const useExecuteWorkflow = () => {
     })
   );
 };
+
+/**
+ * Hook to update an execution node.
+ */
+export const useUpdateExecutionNode = () => {
+  const trpc = useTRPC();
+
+  return useMutation(trpc.nodes.update.mutationOptions());
+};

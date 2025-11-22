@@ -1,11 +1,23 @@
 import { useTRPC } from "@/trpc/client";
-import { useMutation } from "@tanstack/react-query";
+import {
+  useSuspenseQuery
+} from "@tanstack/react-query";
+import { useExecutionsParams } from "./use-executions-params";
 
 /**
- * Hook to update an execution node.
+ * Hook to fetch all executions using suspense.
  */
-export const useUpdateExecutionNode = () => {
+export const useSuspenseExecutions = () => {
   const trpc = useTRPC();
+  const [params] = useExecutionsParams();
 
-  return useMutation(trpc.executions.update.mutationOptions());
+  return useSuspenseQuery(trpc.executions.getMany.queryOptions(params));
+};
+
+/**
+ * Hook to fetch a single execution using suspense
+ */
+export const useSuspenseExecution = (id: string) => {
+  const trpc = useTRPC();
+  return useSuspenseQuery(trpc.executions.getOne.queryOptions({ id }));
 };

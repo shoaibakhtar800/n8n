@@ -36,10 +36,10 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
-import { useUpdateExecutionNode } from "../../hooks/use-executions";
 import { useCredentialsByType } from "@/features/credentials/hooks/use-credentials";
 import { CredentialType } from "@/generated/prisma";
 import Image from "next/image";
+import { useUpdateExecutionNode } from "@/features/workflows/hooks/use-workflows";
 
 export const AVAILABLE_MODELS = [
   "deepseek-ai/DeepSeek-R1",

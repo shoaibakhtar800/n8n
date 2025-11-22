@@ -21,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { workflowIdAtom } from "@/features/editor/store/atoms";
+import { useUpdateExecutionNode } from "@/features/workflows/hooks/use-workflows";
 import { useTRPC } from "@/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
@@ -29,7 +30,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
-import { useUpdateExecutionNode } from "../../hooks/use-executions";
 
 const formSchema = z.object({
   variableName: z
