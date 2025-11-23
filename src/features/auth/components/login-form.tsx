@@ -48,7 +48,7 @@ type LoginFormValue = z.infer<typeof loginSchema>;
 
 const LoginForm = () => {
   const router = useRouter();
-  const { gitHubSignIn, googleSignIn, loading } = useSocialProvider();
+  const { githubSignIn, googleSignIn, loading } = useSocialProvider();
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -99,7 +99,7 @@ const LoginForm = () => {
                     className="w-full"
                     type="button"
                     disabled={isPending || loading}
-                    onClick={gitHubSignIn}
+                    onClick={githubSignIn}
                   >
                     <Image
                       src="github.svg"

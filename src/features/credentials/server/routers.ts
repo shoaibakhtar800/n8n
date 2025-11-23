@@ -1,6 +1,7 @@
 import { PAGINATION } from "@/config/constants";
 import { CredentialType } from "@/generated/prisma";
 import prisma from "@/lib/db";
+import { encrypt } from "@/lib/encryption";
 import {
   createTRPCRouter,
   premiumProcedure,
@@ -25,7 +26,7 @@ export const credentialsRouter = createTRPCRouter({
           name,
           userId: ctx.auth.user.id,
           type,
-          value, // TODO: Consider encrypting in production
+          value: encrypt(value),
         },
       });
     }),
@@ -60,7 +61,7 @@ export const credentialsRouter = createTRPCRouter({
           name,
           userId: ctx.auth.user.id,
           type,
-          value, // TODO: Consider encrypting in production
+          value: encrypt(value),
         },
       });
     }),
@@ -68,7 +69,7 @@ export const credentialsRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
       return prisma.credential.findFirstOrThrow({
-        where: { id: input.id, userId: ctx.auth.user.id }
+        where: { id: input.id, userId: ctx.auth.user.id },
       });
     }),
   getMany: protectedProcedure
@@ -99,7 +100,7 @@ export const credentialsRouter = createTRPCRouter({
           },
           orderBy: {
             updatedAt: "desc",
-          }
+          },
         }),
         prisma.credential.count({
           where: {

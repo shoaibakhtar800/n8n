@@ -55,7 +55,7 @@ type RegisterFormValue = z.infer<typeof registerSchema>;
 
 const RegisterForm = () => {
   const router = useRouter();
-  const { gitHubSignIn, googleSignIn, loading } = useSocialProvider();
+  const { githubSignIn, googleSignIn, loading } = useSocialProvider();
 
   const form = useForm({
     resolver: zodResolver(registerSchema),
@@ -104,7 +104,7 @@ const RegisterForm = () => {
                     className="w-full"
                     type="button"
                     disabled={isPending || loading}
-                    onClick={gitHubSignIn}
+                    onClick={githubSignIn}
                   >
                     <Image
                       src="github.svg"

@@ -1,6 +1,7 @@
 import type { NodeExecutor } from "@/features/executions/types";
 import { huggingfaceChannel } from "@/inngest/channels/huggingface";
 import prisma from "@/lib/db";
+import { decrypt } from "@/lib/encryption";
 import { createHuggingFace } from "@ai-sdk/huggingface";
 import { generateText } from "ai";
 import Handlebars from "handlebars";
@@ -101,7 +102,7 @@ export const huggingfaceExecutor: NodeExecutor<HuggingfaceData> = async ({
     }
 
     const huggingface = createHuggingFace({
-      apiKey: credential.value,
+      apiKey: decrypt(credential.value),
     });
 
     const { steps } = await step.ai.wrap(

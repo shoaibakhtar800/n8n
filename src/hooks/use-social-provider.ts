@@ -22,7 +22,7 @@ export const useSocialProvider = () => {
   };
 
   return {
-    gitHubSignIn: () => signIn("github"),
+    githubSignIn: () => signIn("github"),
     googleSignIn: () => signIn("google"),
     loading,
   };

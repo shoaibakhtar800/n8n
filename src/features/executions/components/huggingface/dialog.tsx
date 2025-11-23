@@ -138,7 +138,7 @@ export const HuggingfaceDialog = ({
       },
       {
         onSuccess: () => {
-          toast.success("Huggingface node updated successfully.");
+          toast.success("Hugging Face node updated successfully.");
           onSubmitSetNodeData(values);
           onOpenChange(false);
           queryClient.invalidateQueries(
@@ -146,7 +146,7 @@ export const HuggingfaceDialog = ({
           );
         },
         onError: (error) => {
-          toast.error(`Failed to update Huggingface node: ${error.message}`);
+          toast.error(`Failed to update Hugging Face node: ${error.message}`);
         },
       }
     );
